@@ -181,6 +181,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
   mouseSensitivity: 0.1
+  cameraCollisionRadius: 0.1
+  cameraCollisionMask:
+    serializedVersion: 2
+    m_Bits: 63
   walkSpeed: 5
   sprintSpeed: 10
   sneakSpeed: 2
@@ -672,8 +676,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 804871574}
-  m_Layer: 0
-  m_Name: Weapons
+  m_Layer: 6
+  m_Name: weapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -751,7 +755,7 @@ Transform:
   m_GameObject: {fileID: 1166091956}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -1, z: -0, w: 0}
-  m_LocalPosition: {x: 0.3, y: 0, z: 0.5}
+  m_LocalPosition: {x: 0.41, y: 0.26, z: 0.96}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -765,9 +769,33 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 804871574}
     m_Modifications:
+    - target: {fileID: 100000, guid: c7741850eebe1df4ea75a80275b16311, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 100002, guid: c7741850eebe1df4ea75a80275b16311, type: 3}
       propertyPath: m_Name
       value: M4_8
+      objectReference: {fileID: 0}
+    - target: {fileID: 100002, guid: c7741850eebe1df4ea75a80275b16311, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 100004, guid: c7741850eebe1df4ea75a80275b16311, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 100006, guid: c7741850eebe1df4ea75a80275b16311, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 100008, guid: c7741850eebe1df4ea75a80275b16311, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 100010, guid: c7741850eebe1df4ea75a80275b16311, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: c7741850eebe1df4ea75a80275b16311, type: 3}
       propertyPath: m_LocalScale.x
@@ -912,7 +940,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 80
+  m_Constraints: 112
   m_CollisionDetection: 1
 --- !u!1 &1647308779
 GameObject:
@@ -1066,7 +1094,7 @@ Transform:
   m_GameObject: {fileID: 1930366362}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -1, z: -0, w: 0}
-  m_LocalPosition: {x: 0.3, y: 0, z: 0.5}
+  m_LocalPosition: {x: 0.41, y: 0.26, z: 0.96}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

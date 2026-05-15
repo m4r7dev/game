@@ -8,6 +8,11 @@ public class Player : MonoBehaviour
     private float verticalRotation = 0f;
     private Transform cameraTransform;
 
+    // Camera Collision
+    private Vector3 cameraDefaultPos;
+    public float cameraCollisionRadius = 0.1f;
+    public LayerMask cameraCollisionMask;
+
     // Ground Movement
     private Rigidbody rb;
     public float walkSpeed = 5f;
@@ -78,12 +83,40 @@ public class Player : MonoBehaviour
         CapsuleCollider col = GetComponent<CapsuleCollider>();
         normalHeight = col.height;
         normalCameraHeight = cameraTransform.localPosition.y;
+        cameraDefaultPos = cameraTransform.localPosition;
 
         playerHeight = col.height * transform.localScale.y;
         raycastDistance = (playerHeight / 2) + 0.2f;
 
+        SetupWeaponCamera();
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+    }
+
+    void SetupWeaponCamera()
+    {
+        int weaponLayer = LayerMask.NameToLayer("weapon");
+        if (weaponLayer == -1)
+        {
+            Debug.LogError("Layer 'weapon' nicht gefunden! Bitte in Tags and Layers erstellen.");
+            return;
+        }
+
+        // Hauptkamera rendert alles außer weapon Layer
+        Camera.main.cullingMask &= ~(1 << weaponLayer);
+
+        // Weapon Camera erstellen
+        GameObject weaponCamObj = new GameObject("WeaponCamera");
+        weaponCamObj.transform.SetParent(cameraTransform);
+        weaponCamObj.transform.localPosition = Vector3.zero;
+        weaponCamObj.transform.localRotation = Quaternion.identity;
+
+        Camera weaponCam = weaponCamObj.AddComponent<Camera>();
+        weaponCam.cullingMask = 1 << weaponLayer;
+        weaponCam.clearFlags = CameraClearFlags.Depth;
+        weaponCam.depth = Camera.main.depth + 1;
+        weaponCam.fieldOfView = Camera.main.fieldOfView;
     }
 
     void Update()
@@ -94,6 +127,7 @@ public class Player : MonoBehaviour
         RotateCamera();
         UpdateHeight();
         CheckSlide();
+        CameraCollision();
 
         if (groundCheckTimer > 0f)
             groundCheckTimer -= Time.deltaTime;
@@ -109,6 +143,24 @@ public class Player : MonoBehaviour
     {
         MovePlayer();
         ApplyJumpPhysics();
+    }
+
+    void CameraCollision()
+    {
+        Vector3 desiredPos = transform.TransformPoint(cameraDefaultPos);
+        RaycastHit hit;
+
+        if (Physics.SphereCast(transform.position, cameraCollisionRadius,
+            (desiredPos - transform.position).normalized,
+            out hit, Vector3.Distance(transform.position, desiredPos),
+            cameraCollisionMask))
+        {
+            cameraTransform.position = hit.point + hit.normal * cameraCollisionRadius;
+        }
+        else
+        {
+            cameraTransform.localPosition = cameraDefaultPos;
+        }
     }
 
     float GetCurrentSpeed()
@@ -140,9 +192,8 @@ public class Player : MonoBehaviour
 
         col.height = Mathf.Lerp(col.height, targetHeight, Time.deltaTime * 10f);
 
-        Vector3 camPos = cameraTransform.localPosition;
-        camPos.y = Mathf.Lerp(camPos.y, targetCameraY, Time.deltaTime * 10f);
-        cameraTransform.localPosition = camPos;
+        cameraDefaultPos.y = Mathf.Lerp(cameraDefaultPos.y, targetCameraY, Time.deltaTime * 10f);
+        cameraTransform.localPosition = cameraDefaultPos;
     }
 
     void MovePlayer()

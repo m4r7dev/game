@@ -25,6 +25,7 @@ public class WeaponSlots : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1)) EquipSlot(1);
         if (Input.GetKeyDown(KeyCode.Alpha2)) EquipSlot(2);
         if (Input.GetKeyDown(KeyCode.Alpha3)) EquipSlot(3);
+        if (Input.GetKeyDown(KeyCode.G))      DropActiveWeapon();
     }
 
     public bool AddWeapon(GameObject weaponObject, WeaponType type)
@@ -40,24 +41,49 @@ public class WeaponSlots : MonoBehaviour
         current.transform.localPosition = Vector3.zero;
         current.transform.localRotation = Quaternion.identity;
 
-        // Rigidbody komplett entfernen
         Rigidbody rb = current.GetComponent<Rigidbody>();
         if (rb != null) Destroy(rb);
 
-        // Collider deaktivieren
         foreach (Collider col in current.GetComponentsInChildren<Collider>())
             col.enabled = false;
 
         PickupItem pickup = current.GetComponent<PickupItem>();
         if (pickup != null) Destroy(pickup);
 
+        SetLayerRecursively(current, LayerMask.NameToLayer("weapon"));
+
         HideAllExcept(current);
         activeWeapon = current;
         return true;
     }
 
+    void DropActiveWeapon()
+    {
+        if (activeWeapon == null) return;
+
+        if (activeWeapon == primaryWeapon)
+        {
+            DropWeapon(primaryWeapon);
+            primaryWeapon = null;
+        }
+        else if (activeWeapon == secondaryWeapon)
+        {
+            DropWeapon(secondaryWeapon);
+            secondaryWeapon = null;
+        }
+        else
+        {
+            DropWeapon(meleeWeapon);
+            meleeWeapon = null;
+        }
+
+        activeWeapon = null;
+    }
+
     void DropWeapon(GameObject weapon)
     {
+        WeaponType type = GetWeaponType(weapon);
+
         weapon.transform.SetParent(null);
 
         Rigidbody rb = weapon.AddComponent<Rigidbody>();
@@ -65,6 +91,19 @@ public class WeaponSlots : MonoBehaviour
 
         foreach (Collider col in weapon.GetComponentsInChildren<Collider>())
             col.enabled = true;
+
+        SetLayerRecursively(weapon, LayerMask.NameToLayer("Default"));
+
+        PickupItem pickup = weapon.AddComponent<PickupItem>();
+        pickup.weaponName = weapon.name;
+        pickup.weaponType = type;
+    }
+
+    WeaponType GetWeaponType(GameObject weapon)
+    {
+        if (weapon == primaryWeapon)   return WeaponType.Primary;
+        if (weapon == secondaryWeapon) return WeaponType.Secondary;
+        return WeaponType.Melee;
     }
 
     public void EquipSlot(int slot)
@@ -84,6 +123,13 @@ public class WeaponSlots : MonoBehaviour
         if (primaryWeapon != null)   primaryWeapon.SetActive(primaryWeapon == active);
         if (secondaryWeapon != null) secondaryWeapon.SetActive(secondaryWeapon == active);
         if (meleeWeapon != null)     meleeWeapon.SetActive(meleeWeapon == active);
+    }
+
+    void SetLayerRecursively(GameObject obj, int layer)
+    {
+        obj.layer = layer;
+        foreach (Transform child in obj.transform)
+            SetLayerRecursively(child.gameObject, layer);
     }
 
     Transform GetSlot(WeaponType type) => type switch
