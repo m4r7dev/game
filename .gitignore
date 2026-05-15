@@ -49,6 +49,7 @@
 ExportedObj/
 .consulo/
 *.unityproj
+*.csproj
 *.sln
 *.suo
 *.tmp
@@ -108,3 +109,4 @@ InitTestScene*.unity*
 .vscode/
 *.lscache
 .vsconfig
+*.slnx
