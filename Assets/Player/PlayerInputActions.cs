@@ -13,6 +13,9 @@ public class Player : MonoBehaviour
     public float walkSpeed = 5f;
     public float sprintSpeed = 10f;
     public float sneakSpeed = 2f;
+    public float sneakHeight = 0.5f; // 0.5 = halb so groß, 0.8 = leicht kleiner
+    private float normalHeight;
+    private float normalCameraHeight;
     private Vector2 moveInput;
 
     // Jumping
@@ -40,7 +43,7 @@ public class Player : MonoBehaviour
     void OnEnable()
     {
         inputActions.Player.Enable();
-        inputActions.Player.Jump.performed += OnJump;
+        inputActions.Player.Jump.performed   += OnJump;
         inputActions.Player.Sprint.performed += ctx => isSprinting = true;
         inputActions.Player.Sprint.canceled  += ctx => isSprinting = false;
         inputActions.Player.Sneak.performed  += ctx => isSneaking = true;
@@ -49,7 +52,11 @@ public class Player : MonoBehaviour
 
     void OnDisable()
     {
-        inputActions.Player.Jump.performed -= OnJump;
+        inputActions.Player.Jump.performed   -= OnJump;
+        inputActions.Player.Sprint.performed -= ctx => isSprinting = true;
+        inputActions.Player.Sprint.canceled  -= ctx => isSprinting = false;
+        inputActions.Player.Sneak.performed  -= ctx => isSneaking = true;
+        inputActions.Player.Sneak.canceled   -= ctx => isSneaking = false;
         inputActions.Player.Disable();
     }
 
@@ -59,7 +66,11 @@ public class Player : MonoBehaviour
         rb.freezeRotation = true;
         cameraTransform = Camera.main.transform;
 
-        playerHeight = GetComponent<CapsuleCollider>().height * transform.localScale.y;
+        CapsuleCollider col = GetComponent<CapsuleCollider>();
+        normalHeight = col.height;
+        normalCameraHeight = cameraTransform.localPosition.y;
+
+        playerHeight = col.height * transform.localScale.y;
         raycastDistance = (playerHeight / 2) + 0.2f;
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -70,7 +81,9 @@ public class Player : MonoBehaviour
     {
         moveInput = inputActions.Player.Move.ReadValue<Vector2>();
         lookInput = inputActions.Player.Look.ReadValue<Vector2>();
+
         RotateCamera();
+        UpdateHeight();
 
         if (groundCheckTimer > 0f)
             groundCheckTimer -= Time.deltaTime;
@@ -95,6 +108,19 @@ public class Player : MonoBehaviour
         return walkSpeed;
     }
 
+    void UpdateHeight()
+    {
+        CapsuleCollider col = GetComponent<CapsuleCollider>();
+        float targetHeight    = isSneaking ? normalHeight * sneakHeight : normalHeight;
+        float targetCameraY   = isSneaking ? normalCameraHeight * sneakHeight : normalCameraHeight;
+
+        col.height = Mathf.Lerp(col.height, targetHeight, Time.deltaTime * 10f);
+
+        Vector3 camPos = cameraTransform.localPosition;
+        camPos.y = Mathf.Lerp(camPos.y, targetCameraY, Time.deltaTime * 10f);
+        cameraTransform.localPosition = camPos;
+    }
+
     void MovePlayer()
     {
         Vector3 movement = (transform.right * moveInput.x + transform.forward * moveInput.y).normalized;
@@ -106,9 +132,7 @@ public class Player : MonoBehaviour
         rb.linearVelocity = velocity;
 
         if (isGrounded && moveInput == Vector2.zero)
-        {
             rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
-        }
     }
 
     void RotateCamera()
