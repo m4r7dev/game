@@ -49,12 +49,7 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.4.7f1\Editor\Data\Tools\BuildPipeline\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\TutorialInfo\Readme.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Assets\TutorialInfo\StyleSheets\ReadmeEditor.uss" />
-    <None Include="Assets\TutorialInfo\StyleSheets\ReadmeEditorLight.uss" />
-    <None Include="Assets\TutorialInfo\StyleSheets\ReadmeEditorDark.uss" />
+    <Compile Include="Assets\Scripts\WeaponManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
