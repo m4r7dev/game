@@ -17,7 +17,6 @@ public class WeaponSlots : MonoBehaviour
 
     void Start()
     {
-        // Slot 1 = Primary, Slot 2 = Secondary, Slot 3 = Melee
         EquipSlot(1);
     }
 
@@ -28,35 +27,44 @@ public class WeaponSlots : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha3)) EquipSlot(3);
     }
 
-    public bool AddWeapon(GameObject weaponPrefab, WeaponType type)
+    public bool AddWeapon(GameObject weaponObject, WeaponType type)
     {
         Transform slot = GetSlot(type);
         ref GameObject current = ref GetWeaponRef(type);
 
-        // Slot bereits belegt — droppen
         if (current != null)
-            DropWeapon(current, slot);
+            DropWeapon(current);
 
-        // Waffe in Slot setzen
-        current = Instantiate(weaponPrefab, slot.position, slot.rotation, slot);
-        current.GetComponent<Rigidbody>().isKinematic = true;
-        current.GetComponent<Collider>().enabled = false;
+        current = weaponObject;
+        current.transform.SetParent(slot);
+        current.transform.localPosition = Vector3.zero;
+        current.transform.localRotation = Quaternion.identity;
 
-        HideAllExcept(activeWeapon);
+        // Rigidbody komplett entfernen
+        Rigidbody rb = current.GetComponent<Rigidbody>();
+        if (rb != null) Destroy(rb);
+
+        // Collider deaktivieren
+        foreach (Collider col in current.GetComponentsInChildren<Collider>())
+            col.enabled = false;
+
+        PickupItem pickup = current.GetComponent<PickupItem>();
+        if (pickup != null) Destroy(pickup);
+
+        HideAllExcept(current);
+        activeWeapon = current;
         return true;
     }
 
-    void DropWeapon(GameObject weapon, Transform slot)
+    void DropWeapon(GameObject weapon)
     {
         weapon.transform.SetParent(null);
-        Rigidbody rb = weapon.GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.isKinematic = false;
-            rb.AddForce(Camera.main.transform.forward * 3f, ForceMode.Impulse);
-        }
-        Collider col = weapon.GetComponent<Collider>();
-        if (col != null) col.enabled = true;
+
+        Rigidbody rb = weapon.AddComponent<Rigidbody>();
+        rb.AddForce(Camera.main.transform.forward * 3f, ForceMode.Impulse);
+
+        foreach (Collider col in weapon.GetComponentsInChildren<Collider>())
+            col.enabled = true;
     }
 
     public void EquipSlot(int slot)
