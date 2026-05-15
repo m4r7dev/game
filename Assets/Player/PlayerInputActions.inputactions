@@ -4,12 +4,12 @@
     "maps": [
         {
             "name": "Player",
-            "id": "6904b1f4-ed07-455d-b476-1d2d2acf3af1",
+            "id": "887d9fab-5879-4425-b74d-3df6aec6105d",
             "actions": [
                 {
                     "name": "Move",
                     "type": "Value",
-                    "id": "b67208f6-deb7-4dd7-94ad-1b9d2060103a",
+                    "id": "fe2e2052-586b-4eb8-87b6-85c7a748122f",
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
@@ -18,7 +18,7 @@
                 {
                     "name": "Jump",
                     "type": "Button",
-                    "id": "45d4f360-1a24-4327-8fda-46c2da7f7b80",
+                    "id": "ab8c8c1a-eacb-417f-be51-4e9c3efed387",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -27,7 +27,7 @@
                 {
                     "name": "Look",
                     "type": "Value",
-                    "id": "0926ee85-14ba-47bc-a1e1-c0ae96f27316",
+                    "id": "0cf16292-3013-4c2d-a7dd-86db3fc1a471",
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
@@ -36,7 +36,7 @@
                 {
                     "name": "Sprint",
                     "type": "Button",
-                    "id": "f8f7bed3-739f-45f8-b97d-3552e23bb2eb",
+                    "id": "63319063-a37e-496f-b0d8-032fcdf83094",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -45,7 +45,16 @@
                 {
                     "name": "Sneak",
                     "type": "Button",
-                    "id": "4d6937e5-c1ce-475d-830a-9cf4658aa055",
+                    "id": "fd7ddf53-9849-410e-a8c9-536c020b7f7c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Slide",
+                    "type": "Button",
+                    "id": "8c383072-c678-4d8e-b74c-2ab7b8709718",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -55,7 +64,7 @@
             "bindings": [
                 {
                     "name": "2D Vector",
-                    "id": "458950d0-f8d3-4824-b5a3-460a9c15ed05",
+                    "id": "ebe389e3-3e51-4b02-ba9d-1cce45ec4926",
                     "path": "2DVector",
                     "interactions": "",
                     "processors": "",
@@ -66,7 +75,7 @@
                 },
                 {
                     "name": "up",
-                    "id": "1bf0e4ba-e3e0-4d7c-8e1a-165896c36b94",
+                    "id": "8e324ea6-93dd-495c-8d65-f74bfc2b5afb",
                     "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
@@ -77,7 +86,7 @@
                 },
                 {
                     "name": "down",
-                    "id": "932837e4-39e9-413a-9990-eee72118d1e6",
+                    "id": "284e5829-810b-4076-af13-48c124f610c6",
                     "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
@@ -88,7 +97,7 @@
                 },
                 {
                     "name": "left",
-                    "id": "39fb93f2-9543-4eb9-826a-066171f9ee24",
+                    "id": "e3573fda-3485-44fd-b644-61c0a6deaeec",
                     "path": "<Keyboard>/a",
                     "interactions": "",
                     "processors": "",
@@ -99,7 +108,7 @@
                 },
                 {
                     "name": "right",
-                    "id": "f0439813-f436-4a32-b904-a30cc2ebac79",
+                    "id": "6886eab3-c0b8-442b-aa8b-13bafd1b5103",
                     "path": "<Keyboard>/d",
                     "interactions": "",
                     "processors": "",
@@ -110,7 +119,7 @@
                 },
                 {
                     "name": "",
-                    "id": "e0053ec2-6315-4089-bacf-a3cd78f81322",
+                    "id": "4d7a4a0e-4040-45df-9cfa-cf53605380be",
                     "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
@@ -121,7 +130,7 @@
                 },
                 {
                     "name": "",
-                    "id": "d02ba6ad-502c-4f77-8cbc-91fb3a0acefe",
+                    "id": "fa56d817-a2e5-4d98-8795-fd45bab0c4b8",
                     "path": "<Mouse>/delta",
                     "interactions": "",
                     "processors": "",
@@ -132,7 +141,7 @@
                 },
                 {
                     "name": "",
-                    "id": "84532139-b2d2-4ad4-9b3e-c28536ef762c",
+                    "id": "f1d59c00-4660-458d-9396-72917477d5f2",
                     "path": "<Keyboard>/leftShift",
                     "interactions": "",
                     "processors": "",
@@ -143,12 +152,23 @@
                 },
                 {
                     "name": "",
-                    "id": "63ffb46f-bd7e-4123-961e-f324ea4cf494",
+                    "id": "7ea24072-efbd-43e3-bba9-d49044a4b953",
                     "path": "<Keyboard>/leftCtrl",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Sneak",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0f12e054-a5f4-4324-b6dc-2741fb954b26",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Slide",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
