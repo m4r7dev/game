@@ -311,21 +311,6 @@ MonoBehaviour:
   primaryWeapon: {fileID: 0}
   secondaryWeapon: {fileID: 0}
   meleeWeapon: {fileID: 0}
---- !u!115 &51044539
-MonoScript:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  serializedVersion: 7
-  m_DefaultReferences: {}
-  m_Icon: {fileID: 0}
-  m_Type: 0
-  m_ExecutionOrder: 0
-  m_ClassName: UIManager/UIDocumentBinder
-  m_Namespace: 
-  m_AssemblyName: Assembly-CSharp
 --- !u!1 &342627161
 GameObject:
   m_ObjectHideFlags: 0
@@ -1385,100 +1370,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2061925532}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &2120276659
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2120276663}
-  - component: {fileID: 2120276662}
-  - component: {fileID: 2120276661}
-  - component: {fileID: 2120276660}
-  m_Layer: 0
-  m_Name: UIRoot
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2120276660
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2120276659}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 51044539}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UIManager/UIDocumentBinder
-  rootAsset: {fileID: 9197481963319205126, guid: 7efb0b2a700e8e14db39038568425004, type: 3}
-  mainPanelName: MainPanel
-  hostPanelName: HostPanel
-  serverListPanelName: ServerListPanel
-  settingsPanelName: SettingsPanel
-  startOverlayPanelName: StartOverlayPanel
---- !u!114 &2120276661
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2120276659}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e20b45cccdc13e4d9076be374b91c44, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UIManager
-  uiBinder: {fileID: 0}
-  playerObjectName: Player
-  cameraObjectName: Main Camera
-  playerMenuOffset: {x: 2.2, y: 0, z: 0.8}
-  cameraMenuPosition: {x: -1.4, y: 1.5, z: -4.2}
-  cameraMenuEuler: {x: 12, y: 25, z: 0}
-  serverListRefreshSeconds: 15
---- !u!114 &2120276662
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2120276659}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
-  m_PanelSettings: {fileID: 11400000, guid: f1669460356b2f94eaa095289995cde5, type: 2}
-  m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 0}
-  m_SortingOrder: 0
-  m_Position: 0
-  m_WorldSpaceSizeMode: 1
-  m_WorldSpaceWidth: 1920
-  m_WorldSpaceHeight: 1080
-  m_PivotReferenceSize: 0
-  m_Pivot: 0
-  m_WorldSpaceCollider: {fileID: 0}
---- !u!4 &2120276663
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2120276659}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1487,4 +1378,3 @@ SceneRoots:
   - {fileID: 1708293662}
   - {fileID: 17270871}
   - {fileID: 804871574}
-  - {fileID: 2120276663}
