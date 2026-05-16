@@ -10,13 +10,6 @@ public class PickupItem : MonoBehaviour
     public float pickupRange = 2.5f;
     public KeyCode pickupKey = KeyCode.E;
 
-    [Header("Fadenkreuz")]
-    public Color crosshairNormal = Color.white;
-    public Color crosshairInRange = Color.yellow;
-    public int crosshairSize = 10;
-    public int crosshairThickness = 2;
-    public int crosshairGap = 4;
-
     private Transform player;
     private WeaponSlots weaponSlots;
     private bool inRange = false;
@@ -59,44 +52,23 @@ public class PickupItem : MonoBehaviour
 
     void OnGUI()
     {
-        if (nearestPickup != this && nearestPickup != null) return;
+        if (!inRange) return;
+        if (nearestPickup != this) return;
 
         int cx = Screen.width / 2;
         int cy = Screen.height / 2;
-        int s = crosshairSize;
-        int g = crosshairGap;
-        int t = crosshairThickness;
 
-        Color color = inRange ? crosshairInRange : crosshairNormal;
-        GUI.color = color;
+        GUIStyle style = new GUIStyle();
+        style.fontSize = 16;
+        style.normal.textColor = Color.white;
+        style.alignment = TextAnchor.MiddleCenter;
 
-        // Horizontal
-        GUI.DrawTexture(new Rect(cx - s - g, cy - t / 2, s, t), Texture2D.whiteTexture);
-        GUI.DrawTexture(new Rect(cx + g,     cy - t / 2, s, t), Texture2D.whiteTexture);
-
-        // Vertikal
-        GUI.DrawTexture(new Rect(cx - t / 2, cy - s - g, t, s), Texture2D.whiteTexture);
-        GUI.DrawTexture(new Rect(cx - t / 2, cy + g,     t, s), Texture2D.whiteTexture);
-
-        // Dot
-        GUI.DrawTexture(new Rect(cx - t / 2, cy - t / 2, t, t), Texture2D.whiteTexture);
-
+        GUI.color = new Color(0, 0, 0, 0.5f);
+        GUI.DrawTexture(new Rect(cx - 110, cy + 25, 220, 28), Texture2D.whiteTexture);
         GUI.color = Color.white;
 
-        if (inRange)
-        {
-            GUIStyle style = new GUIStyle();
-            style.fontSize = 16;
-            style.normal.textColor = Color.white;
-            style.alignment = TextAnchor.MiddleCenter;
-
-            GUI.color = new Color(0, 0, 0, 0.5f);
-            GUI.DrawTexture(new Rect(cx - 110, cy + 25, 220, 28), Texture2D.whiteTexture);
-            GUI.color = Color.white;
-
-            GUI.Label(new Rect(cx - 110, cy + 25, 220, 28),
-                $"[E]  {weaponName} aufheben", style);
-        }
+        GUI.Label(new Rect(cx - 110, cy + 25, 220, 28),
+            $"[E]  {weaponName} aufheben", style);
     }
 
     void OnDestroy()
