@@ -1,7 +1,8 @@
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Player : MonoBehaviour
+public class Player : NetworkBehaviour
 {
     // Camera Rotation
     public float mouseSensitivity = 2f;
@@ -74,7 +75,7 @@ public class Player : MonoBehaviour
         inputActions.Player.Disable();
     }
 
-    void Start()
+    public override void OnNetworkSpawn()
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
@@ -92,6 +93,13 @@ public class Player : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        if (!IsOwner)
+        {
+            // Nicht-eigene Spieler können die Kamera nicht steuern
+            Destroy(cameraTransform.GetComponent<Camera>());
+            return;
+        }
     }
 
     void SetupWeaponCamera()
@@ -121,6 +129,8 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        if (!IsOwner) return;
+
         moveInput = inputActions.Player.Move.ReadValue<Vector2>();
         lookInput = inputActions.Player.Look.ReadValue<Vector2>();
 
