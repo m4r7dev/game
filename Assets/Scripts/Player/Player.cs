@@ -1,6 +1,6 @@
-using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.Netcode;
 
 public class Player : NetworkBehaviour
 {
@@ -77,9 +77,21 @@ public class Player : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        if (!IsOwner)
+        {
+            // Rigidbody für andere Spieler deaktivieren
+            Rigidbody otherRb = GetComponent<Rigidbody>();
+            if (otherRb != null) otherRb.isKinematic = true;
+            inputActions.Disable();
+            return;
+        }
+
         rb = GetComponent<Rigidbody>();
+        if (rb == null) { Debug.LogError("Kein Rigidbody!"); return; }
         rb.freezeRotation = true;
+
         cameraTransform = Camera.main.transform;
+        if (cameraTransform == null) { Debug.LogError("Keine Main Camera!"); return; }
 
         CapsuleCollider col = GetComponent<CapsuleCollider>();
         normalHeight = col.height;
@@ -93,13 +105,6 @@ public class Player : NetworkBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-
-        if (!IsOwner)
-        {
-            // Nicht-eigene Spieler können die Kamera nicht steuern
-            Destroy(cameraTransform.GetComponent<Camera>());
-            return;
-        }
     }
 
     void SetupWeaponCamera()
@@ -107,14 +112,12 @@ public class Player : NetworkBehaviour
         int weaponLayer = LayerMask.NameToLayer("weapon");
         if (weaponLayer == -1)
         {
-            Debug.LogError("Layer 'weapon' nicht gefunden! Bitte in Tags and Layers erstellen.");
+            Debug.LogError("Layer 'weapon' nicht gefunden!");
             return;
         }
 
-        // Hauptkamera rendert alles außer weapon Layer
         Camera.main.cullingMask &= ~(1 << weaponLayer);
 
-        // Weapon Camera erstellen
         GameObject weaponCamObj = new GameObject("WeaponCamera");
         weaponCamObj.transform.SetParent(cameraTransform);
         weaponCamObj.transform.localPosition = Vector3.zero;
@@ -130,6 +133,7 @@ public class Player : NetworkBehaviour
     void Update()
     {
         if (!IsOwner) return;
+        if (rb == null || cameraTransform == null) return;
 
         moveInput = inputActions.Player.Move.ReadValue<Vector2>();
         lookInput = inputActions.Player.Look.ReadValue<Vector2>();
@@ -151,6 +155,8 @@ public class Player : NetworkBehaviour
 
     void FixedUpdate()
     {
+        if (!IsOwner) return;
+        if (rb == null) return;
         MovePlayer();
         ApplyJumpPhysics();
     }
@@ -182,6 +188,7 @@ public class Player : NetworkBehaviour
 
     void CheckSlideStart()
     {
+        if (!IsOwner) return;
         float horizontalSpeed = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z).magnitude;
         if (horizontalSpeed >= slideThreshold && isGrounded)
             isSliding = true;
@@ -241,6 +248,7 @@ public class Player : NetworkBehaviour
 
     void OnJump(InputAction.CallbackContext ctx)
     {
+        if (!IsOwner) return;
         if (isGrounded)
         {
             isSliding = false;
