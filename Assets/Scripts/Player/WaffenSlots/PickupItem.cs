@@ -18,21 +18,17 @@ public class PickupItem : MonoBehaviour
 
     void Start()
     {
-        GameObject playerObj = GameObject.FindWithTag("Player");
-        if (playerObj == null)
-        {
-            Debug.LogError("Kein GameObject mit Tag 'Player' gefunden!");
-            return;
-        }
-        player = playerObj.transform;
-        weaponSlots = playerObj.GetComponent<WeaponSlots>();
-        if (weaponSlots == null)
-            Debug.LogError("WeaponSlots Component fehlt auf dem Player!");
+        TryBindToPlayer();
     }
 
     void Update()
     {
-        if (player == null || weaponSlots == null) return;
+        // Player wird bei Netcode ggf. später gespawnnt -> deshalb binden wir uns nachträglich nach.
+        if (player == null || weaponSlots == null)
+        {
+            TryBindToPlayer();
+            if (player == null || weaponSlots == null) return;
+        }
 
         float distance = Vector3.Distance(transform.position, player.position);
         inRange = distance <= pickupRange;
@@ -42,6 +38,68 @@ public class PickupItem : MonoBehaviour
 
         if (inRange && Input.GetKeyDown(pickupKey))
             Pickup();
+    }
+
+    private bool _hasLoggedMissingPlayer = false;
+
+    private void TryBindToPlayer()
+    {
+        if (player != null && weaponSlots != null)
+            return;
+
+        // Primary: Tag-basiert (falls Tag korrekt gesetzt ist)
+        GameObject playerObj = null;
+        try
+        {
+            playerObj = GameObject.FindWithTag("Player");
+        }
+        catch
+        {
+            // Tag existiert eventuell nicht -> ignoriere
+        }
+
+        // Fallback: über Player-Komponente (falls Tag fehlt / nicht gesetzt ist)
+        if (playerObj == null)
+        {
+            var anyPlayer = FindAnyPlayerComponent();
+            if (anyPlayer != null)
+            {
+                playerObj = anyPlayer.gameObject;
+            }
+        }
+
+        if (playerObj == null)
+        {
+            if (!_hasLoggedMissingPlayer)
+            {
+                Debug.LogWarning("PickupItem: Warte auf Player (Tag 'Player' oder Player-Komponente) ...");
+                _hasLoggedMissingPlayer = true;
+            }
+            return;
+        }
+
+        player = playerObj.transform;
+        weaponSlots = playerObj.GetComponent<WeaponSlots>();
+        if (weaponSlots == null)
+        {
+            weaponSlots = playerObj.GetComponentInChildren<WeaponSlots>();
+        }
+
+        if (weaponSlots == null)
+        {
+            Debug.LogError("WeaponSlots Component fehlt auf dem Player!");
+        }
+    }
+
+    private Player FindAnyPlayerComponent()
+    {
+        var players = FindObjectsOfType<Player>();
+        for (int i = 0; i < players.Length; i++)
+        {
+            if (players[i] != null)
+                return players[i];
+        }
+        return null;
     }
 
     void Pickup()
