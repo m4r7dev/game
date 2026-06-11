@@ -1,6 +1,6 @@
-using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.Netcode;
 
 public class Player : NetworkBehaviour
 {
@@ -77,6 +77,15 @@ public class Player : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        if (!IsOwner)
+        {
+            // Rigidbody für andere Spieler deaktivieren
+            Rigidbody otherRb = GetComponent<Rigidbody>();
+            if (otherRb != null) otherRb.isKinematic = true;
+            inputActions.Disable();
+            return;
+        }
+
         rb = GetComponent<Rigidbody>();
         cameraTransform = Camera.main != null ? Camera.main.transform : null;
 
@@ -104,13 +113,6 @@ public class Player : NetworkBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-
-        if (!IsOwner)
-        {
-            // Nicht-eigene Spieler können die Kamera nicht steuern
-            Destroy(cameraTransform.GetComponent<Camera>());
-            return;
-        }
     }
 
     void SetupWeaponCamera()
@@ -118,14 +120,12 @@ public class Player : NetworkBehaviour
         int weaponLayer = LayerMask.NameToLayer("weapon");
         if (weaponLayer == -1)
         {
-            Debug.LogError("Layer 'weapon' nicht gefunden! Bitte in Tags and Layers erstellen.");
+            Debug.LogError("Layer 'weapon' nicht gefunden!");
             return;
         }
 
-        // Hauptkamera rendert alles außer weapon Layer
         Camera.main.cullingMask &= ~(1 << weaponLayer);
 
-        // Weapon Camera erstellen
         GameObject weaponCamObj = new GameObject("WeaponCamera");
         weaponCamObj.transform.SetParent(cameraTransform);
         weaponCamObj.transform.localPosition = Vector3.zero;
@@ -141,6 +141,7 @@ public class Player : NetworkBehaviour
     void Update()
     {
         if (!IsOwner) return;
+        if (rb == null || cameraTransform == null) return;
 
         moveInput = inputActions.Player.Move.ReadValue<Vector2>();
         lookInput = inputActions.Player.Look.ReadValue<Vector2>();
