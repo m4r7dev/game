@@ -78,10 +78,21 @@ public class Player : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         rb = GetComponent<Rigidbody>();
-        rb.freezeRotation = true;
-        cameraTransform = Camera.main.transform;
+        cameraTransform = Camera.main != null ? Camera.main.transform : null;
 
         CapsuleCollider col = GetComponent<CapsuleCollider>();
+
+        Debug.Log($"[Player] OnNetworkSpawn | IsOwner={IsOwner} | rb={(rb != null)} | cam={(cameraTransform != null)} | capsule={(col != null)} | go={gameObject.name}");
+
+        if (rb == null || cameraTransform == null || col == null)
+        {
+            Debug.LogError("[Player] Missing required components (Rigidbody/CapsuleCollider/MainCamera). Disabling Player to avoid NullReference.");
+            enabled = false;
+            return;
+        }
+
+        rb.freezeRotation = true;
+
         normalHeight = col.height;
         normalCameraHeight = cameraTransform.localPosition.y;
         cameraDefaultPos = cameraTransform.localPosition;
@@ -151,12 +162,17 @@ public class Player : NetworkBehaviour
 
     void FixedUpdate()
     {
+        if (!IsOwner) return;
+        if (rb == null || cameraTransform == null) return;
+
         MovePlayer();
         ApplyJumpPhysics();
     }
 
     void CameraCollision()
     {
+        if (cameraTransform == null || rb == null) return;
+
         Vector3 desiredPos = transform.TransformPoint(cameraDefaultPos);
         RaycastHit hit;
 
@@ -182,6 +198,8 @@ public class Player : NetworkBehaviour
 
     void CheckSlideStart()
     {
+        if (rb == null) return;
+
         float horizontalSpeed = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z).magnitude;
         if (horizontalSpeed >= slideThreshold && isGrounded)
             isSliding = true;
@@ -189,6 +207,8 @@ public class Player : NetworkBehaviour
 
     void CheckSlide()
     {
+        if (rb == null) return;
+
         float horizontalSpeed = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z).magnitude;
         if (horizontalSpeed < 1f)
             isSliding = false;
@@ -196,7 +216,11 @@ public class Player : NetworkBehaviour
 
     void UpdateHeight()
     {
+        if (cameraTransform == null) return;
+
         CapsuleCollider col = GetComponent<CapsuleCollider>();
+        if (col == null) return;
+
         float targetHeight  = (isSneaking || isSliding) ? normalHeight * sneakHeight : normalHeight;
         float targetCameraY = (isSneaking || isSliding) ? normalCameraHeight * sneakHeight : normalCameraHeight;
 
@@ -208,6 +232,8 @@ public class Player : NetworkBehaviour
 
     void MovePlayer()
     {
+        if (rb == null) return;
+
         if (isSliding)
         {
             Vector3 vel = rb.linearVelocity;
@@ -241,6 +267,8 @@ public class Player : NetworkBehaviour
 
     void OnJump(InputAction.CallbackContext ctx)
     {
+        if (rb == null) return;
+
         if (isGrounded)
         {
             isSliding = false;
@@ -252,6 +280,8 @@ public class Player : NetworkBehaviour
 
     void ApplyJumpPhysics()
     {
+        if (rb == null) return;
+
         if (rb.linearVelocity.y < 0)
             rb.linearVelocity += Vector3.up * Physics.gravity.y * fallMultiplier * Time.fixedDeltaTime;
         else if (rb.linearVelocity.y > 0)
